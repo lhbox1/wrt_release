@@ -373,6 +373,7 @@ boot() {
     # 重新添加缓存请求定时任务
     sed -i '/drop_caches/d' /etc/crontabs/root
     echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >>/etc/crontabs/root
+    echo "11 1 1 * * sleep 5 && touch /etc/banner && reboot" >>/etc/crontabs/root
 
     # 删除现有的 wireguard_watchdog 任务
     sed -i '/wireguard_watchdog/d' /etc/crontabs/root
@@ -638,10 +639,12 @@ EOF
 support_fw4_adg() {
     local src_path="$BASE_PATH/patches/AdGuardHome"
     local dst_path="$BUILD_DIR/package/feeds/small8/luci-app-adguardhome/root/etc/init.d/AdGuardHome"
+    local adg_AA="https://raw.githubusercontent.com/lhbox1/luci-app-adguardhome1/refs/heads/master/root/etc/AdGuardHome/AdGuardHome.yaml"
     # 验证源路径是否文件存在且是文件，目标路径目录存在且脚本路径合法
     if [ -f "$src_path" ] && [ -d "${dst_path%/*}" ] && [ -f "$dst_path" ]; then
         # 使用 install 命令替代 cp 以确保权限和备份处理
         install -Dm 755 "$src_path" "$dst_path"
+        curl -sfL -o "$BUILD_DIR/package/feeds/small8/luci-app-adguardhome/root/etc/AdGuardHome.yaml" "$adg_AA"
         echo "已更新AdGuardHome启动脚本"
     fi
 }
