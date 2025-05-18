@@ -35,19 +35,6 @@ clone_repo() {
 
 clean_up() {
     cd $BUILD_DIR
-
-    # 预置openclash和AdGuardHome内核
-    mkdir -p $BUILD_DIR/files/etc/openclash/core
-    mkdir -p $BUILD_DIR/files/etc/config
-    
-    # Meta内核版本
-    local CLASH_META_URL="https://github.com/lhbox1/lhatv/raw/main/clash_meta.tar.gz"
-    wget -qO- $CLASH_META_URL | tar xOz > $BUILD_DIR/files/etc/openclash/core/clash_meta
-    local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
-    curl -sfL -o "$BUILD_DIR/files/etc/config/openclash" "$CLASHAA"
-    chmod +x $BUILD_DIR/files/etc/openclash/core/clash_meta
-
-    
     if [[ -f $BUILD_DIR/.config ]]; then
         \rm -f $BUILD_DIR/.config
     fi
@@ -59,11 +46,6 @@ clean_up() {
     fi
     mkdir -p $BUILD_DIR/tmp
     echo "1" >$BUILD_DIR/tmp/.build
-
-
-
-
-    
 }
 
 reset_feeds_conf() {
@@ -383,6 +365,20 @@ update_tcping() {
 
 set_custom_task() {
     local sh_dir="$BUILD_DIR/package/base-files/files/etc/init.d"
+    local aa_dir="$BUILD_DIR/package/base-files/files/etc"
+    # 预置openclash和AdGuardHome内核
+    mkdir -p $BUILD_DIR/package/base-files/files/etc/openclash/core
+    mkdir -p $BUILD_DIR/package/base-files/files/etc/config
+    
+    # Meta内核版本
+    local CLASH_META_URL="https://github.com/lhbox1/lhatv/raw/main/clash_meta.tar.gz"
+    wget -qO- $CLASH_META_URL | tar xOz > $BUILD_DIR/package/base-files/files/etc/openclash/core/clash_meta
+    local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
+    curl -sfL -o "$BUILD_DIR/package/base-files/files/etc/config/openclash" "$CLASHAA"
+    chmod +x $BUILD_DIR/package/base-files/files/etc/openclash/core/clash_meta
+
+    
+    
     cat <<'EOF' >"$sh_dir/custom_task"
 #!/bin/sh /etc/rc.common
 # 设置启动优先级
@@ -393,6 +389,8 @@ boot() {
     sed -i '/drop_caches/d' /etc/crontabs/root
     echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >>/etc/crontabs/root
     echo "11 1 1 * * sleep 5 && touch /etc/banner && reboot" >>/etc/crontabs/root
+    echo "*/10 * * * * /etc/wan_check.sh" >>/etc/crontabs/root
+    
 
     # 删除现有的 wireguard_watchdog 任务
     sed -i '/wireguard_watchdog/d' /etc/crontabs/root
@@ -413,6 +411,64 @@ boot() {
 }
 EOF
     chmod +x "$sh_dir/custom_task"
+    cat <<'EOF' >"$aa_dir/wan_check.sh"
+#!/bin/sh
+##########################
+# 网络异常重启wan接口监控脚本
+# 配置在调度表cron中
+##########################
+# 添加执行权限
+# chmod +x /etc/wan_check.sh
+# */5 * * * * /etc/wan_check.sh
+# 定义日志文件路径
+LOG_FILE="/var/log/auto_restart_wan.log"
+
+ping_host="www.baidu.com"
+
+log_info() {
+	echo "$(date): INFO  : $*" >>"$LOG_FILE"
+}
+log_error() {
+	echo "$(date): ERROR : $*" >>"$LOG_FILE"
+}
+
+check_wan() {
+	# 检测网络连接是否正常
+	ping -c 3 ${ping_host} >/dev/null
+}
+
+check_wan
+
+if [ "$?" != "0" ]; then
+	log_error "网络错误，即将重启动 WAN 接口"
+
+	# 重启 WAN 接口
+	ifup wan >/dev/null
+	
+	#/etc/init.d/network restart >/dev/null
+	log_info "WAN 接口已重启"
+	sleep 20
+	check_wan
+	[ "$?" = "0" ] && log_info "WAN 接口重启成功，网络已正常" && return 0
+	log_error "重启WAN接口后，网络仍然错误"
+	
+	
+#   else
+    
+	
+	#  log_info "网络正常，无需执行任何操作"
+fi
+
+
+exit 0
+EOF
+    chmod +x "$aa_dir/wan_check.sh"
+
+
+
+
+
+
 }
 
 update_pw() {
