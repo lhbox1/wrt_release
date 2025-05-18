@@ -374,7 +374,7 @@ set_custom_task() {
     local CLASH_META_URL="https://github.com/lhbox1/lhatv/raw/main/clash_meta.tar.gz"
     wget -qO- $CLASH_META_URL | tar xOz > $BUILD_DIR/package/base-files/files/etc/openclash/core/clash_meta
     local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
-    curl -sfL -o "$BUILD_DIR/package/base-files/files/etc/config/openclash" "$CLASHAA"
+    curl -sfL -o $BUILD_DIR/package/base-files/files/etc/config/openclash $CLASHAA
     chmod +x $BUILD_DIR/package/base-files/files/etc/openclash/core/clash_meta
 
     
@@ -720,7 +720,7 @@ support_fw4_adg() {
     if [ -f "$src_path" ] && [ -d "${dst_path%/*}" ] && [ -f "$dst_path" ]; then
         # 使用 install 命令替代 cp 以确保权限和备份处理
         install -Dm 755 "$src_path" "$dst_path"
-        curl -sfL -o "$BUILD_DIR/package/feeds/small8/luci-app-adguardhome/root/etc/AdGuardHome.yaml" "$adg_AA"
+        curl -sfL -o $BUILD_DIR/package/feeds/small8/luci-app-adguardhome/root/etc/AdGuardHome.yaml $adg_AA
         echo "已更新AdGuardHome启动脚本"
     fi
 }
