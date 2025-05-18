@@ -37,32 +37,15 @@ clean_up() {
     cd $BUILD_DIR
 
     # 预置openclash和AdGuardHome内核
-    mkdir -p files/etc/openclash/core
+    mkdir -p $BUILD_DIR/files/etc/openclash/core
+    mkdir -p $BUILD_DIR/files/etc/config
     
-# Meta内核版本
-CLASH_META_URL="https://github.com/lhbox1/lhatv/raw/main/clash_meta.tar.gz"
-wget -qO- $CLASH_META_URL | tar xOz > files/etc/openclash/core/clash_meta
-
-# 给内核权限
-chmod +x files/etc/openclash/core/clash*
-# 给wan_check权限
-#chmod +x files/etc/wan_check.sh
-
-#chmod +x files/etc/hostsUpdate.sh
-# GeoSite.dat
-GEOSITE_URL="https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat"
-wget -qO- $GEOSITE_URL > files/etc/openclash/GeoSite.dat
-
-# Country.mmdb
-COUNTRY_LITE_URL=https://raw.githubusercontent.com/alecthw/mmdb_china_ip_list/release/lite/Country.mmdb
-wget -qO- $COUNTRY_LITE_URL > files/etc/openclash/Country.mmdb
-chnr_custom_url="https://ispip.clang.cn/all_cn.txt"
-chnr6_custom_url="https://ispip.clang.cn/all_cn_ipv6.txt"
-#cndomain_custom_url="https://testingcf.jsdelivr.net/gh/felixonmars/dnsmasq-china-list@master/accelerated-domains.china.conf"
-wget -qO- $chnr_custom_url > files/etc/openclash/china_ip_route.ipset
-wget -qO- $chnr6_custom_url > files/etc/openclash/china_ip6_route.ipset
-#wget -qO- $cndomain_custom_url > files/etc/openclash/accelerated-domains.china.conf
-
+    # Meta内核版本
+    local CLASH_META_URL="https://github.com/lhbox1/lhatv/raw/main/clash_meta.tar.gz"
+    wget -qO- $CLASH_META_URL | tar xOz > $BUILD_DIR/files/etc/openclash/core/clash_meta
+    local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
+    curl -sfL -o "$BUILD_DIR/files/etc/config/openclash" "$CLASHAA"
+    chmod +x $BUILD_DIR/files/etc/openclash/core/clash_meta
 
     
     if [[ -f $BUILD_DIR/.config ]]; then
@@ -76,6 +59,11 @@ wget -qO- $chnr6_custom_url > files/etc/openclash/china_ip6_route.ipset
     fi
     mkdir -p $BUILD_DIR/tmp
     echo "1" >$BUILD_DIR/tmp/.build
+
+
+
+
+    
 }
 
 reset_feeds_conf() {
@@ -671,9 +659,7 @@ support_fw4_adg() {
     local src_path="$BASE_PATH/patches/AdGuardHome"
     local dst_path="$BUILD_DIR/package/feeds/small8/luci-app-adguardhome/root/etc/init.d/AdGuardHome"
     local adg_AA="https://raw.githubusercontent.com/lhbox1/luci-app-adguardhome1/refs/heads/master/root/etc/AdGuardHome/AdGuardHome.yaml"
-    local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
-    curl -sfL -o "$BUILD_DIR/package/feeds/small8/luci-app-openclash/root/etc/config/openclash" "$CLASHAA"
-
+    
     # 验证源路径是否文件存在且是文件，目标路径目录存在且脚本路径合法
     if [ -f "$src_path" ] && [ -d "${dst_path%/*}" ] && [ -f "$dst_path" ]; then
         # 使用 install 命令替代 cp 以确保权限和备份处理
