@@ -375,7 +375,7 @@ set_custom_task() {
     wget -qO- $CLASH_META_URL | tar xOz > $BUILD_DIR/files/etc/openclash/core/clash_meta
     local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
     curl -sfL -o $BUILD_DIR/files/etc/config/openclash $CLASHAA
-    chmod +x $BUILD_DIR/package/base-files/files/etc/openclash/core/clash_meta
+    chmod +x $BUILD_DIR/files/etc/openclash/core/clash_meta
 
     
     
