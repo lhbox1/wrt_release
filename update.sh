@@ -365,17 +365,6 @@ update_tcping() {
 
 set_custom_task() {
     local sh_dir="$BUILD_DIR/files/etc/init.d"
-    local aa_dir="$BUILD_DIR/files/etc"
-    # 预置openclash和AdGuardHome内核
-    mkdir -p $BUILD_DIR/files/etc/openclash/core
-    mkdir -p $BUILD_DIR/files/etc/config
-    # Meta内核版本
-    local CLASH_META_URL="https://github.com/lhbox1/lhatv/raw/main/clash_meta.tar.gz"
-    wget -qO- $CLASH_META_URL | tar xOz > $BUILD_DIR/files/etc/openclash/core/clash_meta
-    local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
-    curl -sfL -o $BUILD_DIR/files/etc/config/openclash $CLASHAA
-    chmod +x $BUILD_DIR/files/etc/openclash/core/clash_meta
-    
     cat <<'EOF' >"$sh_dir/custom_task"
 #!/bin/sh /etc/rc.common
 # 设置启动优先级
@@ -420,7 +409,7 @@ install_opkg_distfeeds() {
     local emortal_def_dir="$BUILD_DIR/package/emortal/default-settings"
     local distfeeds_conf="$emortal_def_dir/files/99-distfeeds.conf"
 
-    #if [ -d "$emortal_def_dir" ] && [ ! -f "$distfeeds_conf" ]; then
+    if [ -d "$emortal_def_dir" ] && [ ! -f "$distfeeds_conf" ]; then
         cat <<'EOF' >"$distfeeds_conf"
 src/gz openwrt_base https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/base/
 src/gz openwrt_luci https://downloads.immortalwrt.org/releases/24.10-SNAPSHOT/packages/aarch64_cortex-a53/luci/
@@ -436,7 +425,7 @@ EOF
         sed -i "/exit 0/i\\
 [ -f \'/etc/99-distfeeds.conf\' ] && mv \'/etc/99-distfeeds.conf\' \'/etc/opkg/distfeeds.conf\'\n\
 sed -ri \'/check_signature/s@^[^#]@#&@\' /etc/opkg.conf\n" $emortal_def_dir/files/99-default-settings
-    #fi
+    fi
 }
 
 update_nss_pbuf_performance() {
