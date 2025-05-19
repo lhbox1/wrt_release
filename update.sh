@@ -365,17 +365,6 @@ update_tcping() {
 
 set_custom_task() {
     local sh_dir="$BUILD_DIR/package/base-files/files/etc/init.d"
-    
-    # 预置openclash和AdGuardHome内核
-    mkdir -p $BUILD_DIR/files/etc/openclash/core
-    mkdir -p $BUILD_DIR/files/etc/config
-    # Meta内核版本
-    local CLASH_META_URL="https://github.com/lhbox1/lhatv/raw/main/clash_meta.tar.gz"
-    wget -qO- $CLASH_META_URL | tar xOz > $BUILD_DIR/files/etc/openclash/core/clash_meta
-    local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
-    curl -sfL -o $BUILD_DIR/files/etc/config/openclash $CLASHAA
-    chmod +x $BUILD_DIR/files/etc/openclash/core/clash_meta
-    
     cat <<'EOF' >"$sh_dir/custom_task"
 #!/bin/sh /etc/rc.common
 # 设置启动优先级
