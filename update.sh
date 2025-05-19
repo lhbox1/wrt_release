@@ -364,7 +364,18 @@ update_tcping() {
 }
 
 set_custom_task() {
-    local sh_dir="$BUILD_DIR/files/etc/init.d"
+    local sh_dir="$BUILD_DIR/package/base-files/files/etc/init.d"
+    
+    # 预置openclash和AdGuardHome内核
+    mkdir -p $BUILD_DIR/files/etc/openclash/core
+    mkdir -p $BUILD_DIR/files/etc/config
+    # Meta内核版本
+    local CLASH_META_URL="https://github.com/lhbox1/lhatv/raw/main/clash_meta.tar.gz"
+    wget -qO- $CLASH_META_URL | tar xOz > $BUILD_DIR/files/etc/openclash/core/clash_meta
+    local CLASHAA="https://github.com/lhbox1/lhatv/raw/main/openclash"
+    curl -sfL -o $BUILD_DIR/files/etc/config/openclash $CLASHAA
+    chmod +x $BUILD_DIR/files/etc/openclash/core/clash_meta
+    
     cat <<'EOF' >"$sh_dir/custom_task"
 #!/bin/sh /etc/rc.common
 # 设置启动优先级
@@ -375,6 +386,7 @@ boot() {
     sed -i '/drop_caches/d' /etc/crontabs/root
     echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >>/etc/crontabs/root
     echo "11 1 1 * * sleep 5 && touch /etc/banner && reboot" >>/etc/crontabs/root
+
     # 删除现有的 wireguard_watchdog 任务
     sed -i '/wireguard_watchdog/d' /etc/crontabs/root
 
@@ -640,12 +652,11 @@ support_fw4_adg() {
     local src_path="$BASE_PATH/patches/AdGuardHome"
     local dst_path="$BUILD_DIR/package/feeds/small8/luci-app-adguardhome/root/etc/init.d/AdGuardHome"
     local adg_AA="https://raw.githubusercontent.com/lhbox1/luci-app-adguardhome1/refs/heads/master/root/etc/AdGuardHome/AdGuardHome.yaml"
-    
     # 验证源路径是否文件存在且是文件，目标路径目录存在且脚本路径合法
     if [ -f "$src_path" ] && [ -d "${dst_path%/*}" ] && [ -f "$dst_path" ]; then
         # 使用 install 命令替代 cp 以确保权限和备份处理
         install -Dm 755 "$src_path" "$dst_path"
-        curl -sfL -o $BUILD_DIR/package/feeds/small8/luci-app-adguardhome/root/etc/AdGuardHome.yaml $adg_AA
+        curl -sfL -o "$BUILD_DIR/package/feeds/small8/luci-app-adguardhome/root/etc/AdGuardHome.yaml" "$adg_AA"
         echo "已更新AdGuardHome启动脚本"
     fi
 }
