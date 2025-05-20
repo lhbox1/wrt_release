@@ -123,7 +123,7 @@ remove_unwanted_packages() {
         "msd_lite"
     )
     local small8_packages=(
-        "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq" "luci-theme-argon" "luci-app-argon-config"
+        "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
     )
 
     for pkg in "${luci_packages[@]}"; do
@@ -168,7 +168,7 @@ install_small8() {
         tuic-client chinadns-ng ipt2socks tcping trojan-plus simple-obfs shadowsocksr-libev \
         luci-app-passwall alist luci-app-alist smartdns luci-app-smartdns v2dat mosdns luci-app-mosdns \
         adguardhome luci-app-adguardhome ddns-go luci-app-ddns-go taskd luci-lib-xterm luci-lib-taskd \
-        luci-theme-argon luci-app-argon-config luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
+        luci-theme-argon luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
         netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
         easytier luci-app-easytier msd_lite luci-app-msd_lite
@@ -195,7 +195,7 @@ aadiy2() {
 
 
 
-git clone https://github.com/sbwml/luci-theme-argon.git ./feeds/small8/luci-theme-argon
+# git clone https://github.com/sbwml/luci-theme-argon.git ./feeds/small8/luci-theme-argon
 
 #git clone https://github.com/xiaorouji/openwrt-passwall.git ./feeds/small8/openwrt-passwall
 
@@ -587,6 +587,7 @@ function add_backup_info_to_sysupgrade() {
         cat >"$conf_path" <<'EOF'
 /etc/AdGuardHome.yaml
 /etc/easytier
+/etc/opkg/distfeeds.conf
 /etc/lucky/
 EOF
     fi
