@@ -24,7 +24,7 @@ FEEDS_CONF="feeds.conf.default"
 GOLANG_REPO="https://github.com/sbwml/packages_lang_golang"
 GOLANG_BRANCH="24.x"
 THEME_SET="argon"
-LAN_ADDR="192.168.15.77"
+LAN_ADDR="192.168.15.15"
 
 clone_repo() {
     if [[ ! -d $BUILD_DIR ]]; then
@@ -57,6 +57,22 @@ reset_feeds_conf() {
     fi
 }
 
+
+aadiy() {
+
+
+
+[ -e $BASE_PATH/files ] && mv $BASE_PATH/files $BUILD_DIR/files
+        
+
+
+
+
+
+
+
+}
+
 update_feeds() {
     # 删除注释行
     sed -i '/^#/d' "$BUILD_DIR/$FEEDS_CONF"
@@ -76,6 +92,7 @@ update_feeds() {
     # 切换nss-packages源
     #if grep -q "nss_packages" "$BUILD_DIR/$FEEDS_CONF"; then
     #    sed -i '/nss_packages/d' "$BUILD_DIR/$FEEDS_CONF"
+    #    [ -z "$(tail -c 1 "$BUILD_DIR/$FEEDS_CONF")" ] || echo "" >>"$BUILD_DIR/$FEEDS_CONF"
     #    echo "src-git nss_packages https://github.com/ZqinKing/nss-packages.git" >>"$BUILD_DIR/$FEEDS_CONF"
     #fi
 
@@ -100,7 +117,7 @@ remove_unwanted_packages() {
         "msd_lite"
     )
     local small8_packages=(
-        "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq"
+        "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq" "luci-theme-argon" "luci-app-argon-config"
     )
 
     for pkg in "${luci_packages[@]}"; do
@@ -136,6 +153,7 @@ update_golang() {
         \rm -rf ./feeds/packages/lang/golang
         git clone --depth 1 $GOLANG_REPO -b $GOLANG_BRANCH ./feeds/packages/lang/golang
     fi
+    
 }
 
 install_small8() {
@@ -144,8 +162,8 @@ install_small8() {
         tuic-client chinadns-ng ipt2socks tcping trojan-plus simple-obfs shadowsocksr-libev \
         luci-app-passwall alist luci-app-alist smartdns luci-app-smartdns v2dat mosdns luci-app-mosdns \
         adguardhome luci-app-adguardhome ddns-go luci-app-ddns-go taskd luci-lib-xterm luci-lib-taskd \
-        luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
-        luci-theme-argon netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
+        luci-theme-argon luci-app-argon-config luci-app-store quickstart luci-app-quickstart luci-app-istorex luci-app-cloudflarespeedtest \
+        netdata luci-app-netdata lucky luci-app-lucky luci-app-openclash luci-app-homeproxy \
         luci-app-amlogic nikki luci-app-nikki tailscale luci-app-tailscale oaf open-app-filter luci-app-oaf \
         easytier luci-app-easytier msd_lite luci-app-msd_lite
 }
@@ -164,6 +182,28 @@ install_feeds() {
         fi
     done
 }
+
+
+
+aadiy2() {
+
+
+
+git clone https://github.com/sbwml/luci-theme-argon.git ./feeds/small8
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
 
 fix_default_set() {
     # 修改默认主题
@@ -374,7 +414,6 @@ boot() {
     # 重新添加缓存请求定时任务
     sed -i '/drop_caches/d' /etc/crontabs/root
     echo "15 3 * * * sync && echo 3 > /proc/sys/vm/drop_caches" >>/etc/crontabs/root
-    echo "11 1 1 * * sleep 5 && touch /etc/banner && reboot" >>/etc/crontabs/root
 
     # 删除现有的 wireguard_watchdog 任务
     sed -i '/wireguard_watchdog/d' /etc/crontabs/root
@@ -752,8 +791,10 @@ main() {
     clone_repo
     clean_up
     reset_feeds_conf
+    aadiy
     update_feeds
     remove_unwanted_packages
+    aadiy2
     update_homeproxy
     fix_default_set
     fix_miniupnpd
@@ -764,7 +805,7 @@ main() {
     update_default_lan_addr
     remove_something_nss_kmod
     update_affinity_script
-    fix_build_for_openssl
+    # fix_build_for_openssl
     update_ath11k_fw
     # fix_mkpkg_format_invalid
     chanage_cpuusage
