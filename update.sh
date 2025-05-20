@@ -123,7 +123,7 @@ remove_unwanted_packages() {
         "msd_lite"
     )
     local small8_packages=(
-        "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq" "luci-theme-argon" "luci-app-argon-config" "luci-app-passwall"
+        "ppp" "firewall" "dae" "daed" "daed-next" "libnftnl" "nftables" "dnsmasq" "luci-theme-argon" "luci-app-argon-config"
     )
 
     for pkg in "${luci_packages[@]}"; do
@@ -197,7 +197,7 @@ aadiy2() {
 
 git clone https://github.com/sbwml/luci-theme-argon.git ./feeds/small8/luci-theme-argon
 
-git clone https://github.com/xiaorouji/openwrt-passwall.git ./feeds/small8/openwrt-passwall
+#git clone https://github.com/xiaorouji/openwrt-passwall.git ./feeds/small8/openwrt-passwall
 
 
 
