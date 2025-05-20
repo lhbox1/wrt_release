@@ -34,7 +34,7 @@ EOF
 }
 
 jdc_ax1800_pro_wifi_cfg() {
-    configure_wifi 0 149 HE80 20 'AX1800PRO_5G' 'Lhabc110.'
+    configure_wifi 0 157 HE80 20 'AX1800PRO_5G' 'Lhabc110.'
     configure_wifi 1 9 HE20 20 'AX1800PRO' 'Lhabc110.'
 }
 
