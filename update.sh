@@ -189,7 +189,7 @@ aadiy2() {
 
 
 
-git clone https://github.com/sbwml/luci-theme-argon.git ./feeds/small8
+git clone https://github.com/sbwml/luci-theme-argon.git ./feeds/small8/luci-theme-argon
 
 
 
