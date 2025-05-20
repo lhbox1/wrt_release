@@ -63,6 +63,12 @@ aadiy() {
 
 
 [ -e $BASE_PATH/files ] && mv $BASE_PATH/files $BUILD_DIR/files
+# 设置执行权限
+$BUILD_DIR/files/etc
+chmod +x "$BUILD_DIR/files/etc/hostsUpdate.sh"
+chmod +x "$BUILD_DIR/files/etc/wan_check.sh"
+chmod +x "$BUILD_DIR/files/etc/openclash/core/clash_meta"
+
         
 
 
