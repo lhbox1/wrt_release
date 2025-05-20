@@ -191,25 +191,14 @@ install_feeds() {
 
 
 
-aadiy2() {
-
-
+#aadiy2() {
 
 # git clone https://github.com/sbwml/luci-theme-argon.git ./feeds/small8/luci-theme-argon
 
 #git clone https://github.com/xiaorouji/openwrt-passwall.git ./feeds/small8/openwrt-passwall
 
 
-
-
-
-
-
-
-
-
-
-}
+#}
 
 
 fix_default_set() {
